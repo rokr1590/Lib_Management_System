@@ -1,0 +1,91 @@
+CREATE VIEW AvailableBooks AS
+  SELECT b.ISBN, b.Title, b.Author, b.Price
+  FROM Book b
+  WHERE b.Quantity > 0;
+
+-- Create a view to show the students who have borrowed books
+CREATE VIEW BorrowedBooks AS
+  SELECT s.SID, s.Name, s.Course, s.Branch, s.Email, r.ISBN, r.IssueDate, r.ReturnDate
+  FROM Record r
+  INNER JOIN Student s ON r.SID = s.SID
+  WHERE r.ReturnDate IS NULL;
+
+-- Create a view to show the books that are overdue for return
+CREATE VIEW OverdueBooks AS
+  SELECT s.SID, s.Name, s.Course, s.Branch, s.Email, r.ISBN, r.IssueDate, r.ReturnDate
+  FROM Record r
+  INNER JOIN Student s ON r.SID = s.SID
+  WHERE r.ReturnDate>r.IssueDate +15;'
+  
+ VALIDATION
+
+
+ Alter table Student
+ ADD CHECK(Email LIKE '%@%.%');
+
+
+CREATE TRIGGER UpdateBookQuantity  AFTER INSERT ON Issue_Book  FOR EACH ROW  BEGIN    UPDATE Book    SET Quantity = Quantity - 1    WHERE ISBN = NEW.ISBN;  END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER UpdateBookQuantity2 AFTER UPDATE ON Issue_Book  FOR EACH ROW  BEGIN    UPDATE Book    SET Quantity = Quantity - 1    WHERE ISBN = NEW.ISBN;  END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER UpdateBookQuantity3 AFTER INSERT ON Return_Book  FOR EACH ROW  BEGIN    UPDATE Book    SET Quantity = Quantity + 1    WHERE ISBN = NEW.ISBN;  END;
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TRIGGER UpdateBookQuantity4 AFTER UPDATE ON Return_Book  FOR EACH ROW  BEGIN    UPDATE Book    SET Quantity = Quantity + 1    WHERE ISBN = NEW.ISBN;  END;
+    -> //
+
+
+
+-- Create a trigger to automatically update the Quantity column in the Book table
+-- when a book is borrowed or returned
+
+
+-- Create a trigger to automatically update the IssueDate and ReturnDate columns in the Record table
+-- when a book is borrowed or returned
+
+
+A stored procedure is a precompiled collection of SQL statements that can be executed as a single unit. In the library management system database, you can use a stored procedure to perform a specific task or set of tasks, such as adding a new book to the database.
+
+Here is an example of a stored procedure that can be used to add a new book to the database:
+
+-- Create the stored procedure
+DELIMITER ##
+mysql> CREATE PROCEDURE AddBook(
+    -> IN bid int,
+    -> IN tl varchar(20),
+    -> IN ar varchar(20),
+    -> IN prc int,
+    -> IN qty int
+    -> )
+    -> BEGIN
+    ->  INSERT INTO BOOK(ISBN,Title,Author,Price,Quantity)
+    ->  VALUES (bid,tl,ar,prc,qty);
+    -> END;
+    -> ##
+
+CALL AddBook(12345,'The Great Gatsby','F.Scott',100,5);
+
+A function is a subroutine that returns a value. In the library management system database, you can use a function to perform a specific task or calculation, such as calculating the total price of all the books in the database.
+
+Here is an example of a function that can be used to calculate the total price of all the books in the database:
+
+ DELIMITER //
+mysql> CREATE FUNCTION TotalBookPrice()
+    -> RETURNS int
+    -> BEGIN
+    ->  DECLARE total_price INT;
+    ->  SET total_price=0;
+    ->  Select SUM(price) into total_price from Book;
+    ->  RETURN total_price;
+    -> END;
+    -> //
+    
+    To execute the function, you can use the SELECT statement:
+SELECT TotalBookPrice();
+
+Once you have extracted the data from the database using SQL queries, you can use a tool or software application to format the data into a report. There are many different tools and software applications available for generating reports, such as Microsoft Excel, Crystal Reports, and JasperReports. You can choose the tool or application that best meets your needs and preferences.
